@@ -113,6 +113,7 @@ class Player:
     # fruits = {}
     # tasks = []
     props = []
+    buff = []
 
     def __init__(self, playername) -> None:
         self.playername = playername
@@ -154,39 +155,37 @@ players.append(Player("Player 4"))
 # 定义道具
 class Prop:
     name = ""
-    discription = ""
-    price = 0
+    duration = 0
     use = None
 
-    def __init__(self, name, discription, price, use) -> None:
+    def __init__(self, name, duration, use) -> None:
         self.name = name
-        self.discription = discription
-        self.price = price
+        self.duration = duration
         self.use = use
 
 
 props = []
 
 
-def use_fertilizer(player):
-    print("===Use Fertilizer===")
-    print("input land number: ", end="")
-    landnum = int(input())
-    if landnum not in range(1, len(player.lands) + 1):
-        print("Invalid land number!")
-        return
-    land = player.lands[landnum - 1]
-    land.plant_points += 1
-    player.fruits["Fertilizer"] -= 1
-    print("Use Fertilizer on Land{} successfully!".format(landnum))
-
+# def use_fertilizer(player):
+#     print("===Use Fertilizer===")
+#     print("input land number: ", end="")
+#     landnum = int(input())
+#     if landnum not in range(1, len(player.lands) + 1):
+#         print("Invalid land number!")
+#         return
+#     land = player.lands[landnum - 1]
+#     land.plant_points += 1
+#     player.fruits["Fertilizer"] -= 1
+#     print("Use Fertilizer on Land{} successfully!".format(landnum))
+def use_greenhouse(player):
+    pass
 
 props.append(
     Prop(
-        name="Fertilizer",
-        discription="Use Fertilizer on a land to increase 1 point",
-        price=10,
-        use=use_fertilizer,
+        name="Greenhouse",
+        use= use_greenhouse,
+        duration = 20,
     )
 )
 
@@ -204,37 +203,42 @@ class MenuItem:
 playermenuitems = []
 
 
+# 购买土地
 def menuitem_buyland(player):
     print("===Buy Land===")
     # if player.money < 10:
     #     print("Not enough money!")
     #     return
     # player.money-=10
+
     if len(player.lands) >= 2:
         print("Land is full!")
         return
     else:
-        player.lands.append(Land(None))
-    print("Buy Land successfully!")
+        confirm = input("Buy land? Have enough money? (y/n): ")
+        if confirm == "y":
+            player.lands.append(Land(None))
+            print("✅ Buy Land successfully!")
 
 
 playermenuitems.append(MenuItem(name="Buy Land", operation=menuitem_buyland))
 
 
+# 种植作物
 def menuitem_plant(player):
     print("===Plant Fruit===")
-    land_num = int(input("input land number: "))
+    land_num = int(input("Input land number: (1-{}): ".format(len(player.lands))))
     try:
         if player.lands[land_num - 1].plant == None:
-            plant_num = int(input("input plant: "))
-            player.lands[land_num-1].plant = plants[plant_num-1]
+            plant_num = int(input("Input plant: (1-{}): ".format(len(plants))))
+            player.lands[land_num - 1].plant = plants[plant_num - 1]
             # player.lands.pop(land_num - 1)
             # player.lands.append(Land(plants[plant_num - 1]))
         else:
-            print("Land is not empty!")
+            print("🚫 Land is not empty!")
             return
     except:
-        print("Invalid operation!")
+        print("🚫 Invalid operation!")
         return
 
 
@@ -259,16 +263,16 @@ def print_player(player):
     print("  Lands: ")
     for land in player.lands:
         if land.plant == None:
-            print("    Land{}: ❌Empty".format(player.lands.index(land) + 1))
+            print("    Land{}: ❌ Empty".format(player.lands.index(land) + 1))
         elif land.plant_status == 1:
             print(
-                "    Land{}: {}, [✅Ready to harvest]".format(
+                "    Land{}: {}, [✅ Ready to harvest]".format(
                     player.lands.index(land) + 1, land.plant.name
                 )
             )
         else:
             print(
-                "    Land{}: {}, 🕑{}'[{}]".format(
+                "    Land{}: {}, 🕑 {}'[{}]".format(
                     player.lands.index(land) + 1,
                     land.plant.name,
                     land.plant_points,
@@ -287,9 +291,16 @@ def print_player(player):
     # for task in player.tasks:
     #     print("      {}".format(task.discription))
 
-    print("  Props: ", end="")
-    for prop in player.props:
-        print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
+    # print("  Props: ", end="")
+    # for prop in player.props:
+    #     print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
+
+    # 玩家状态
+    print("  Buff", end="")
+    # for buff in player.buff:
+    #     print("    {}, Duration: {}".format(buff.name, buff.duration), end=" ")
+
+    
     print()
 
 
@@ -312,7 +323,7 @@ def playermenu_use(player):
             break
         select = int(select)
         if select not in range(1, len(playermenuitems) + 1):
-            print("Invalid select!")
+            print("🚫 Invalid select!")
             continue
         playermenuitems[select - 1].operation(player)
 
@@ -322,8 +333,10 @@ def playermenu_use(player):
 #
 
 # 随机分配植物
+# for player in players:
+#     player.lands.append(Land(random.choice(plants)))
 for player in players:
-    player.lands.append(Land(random.choice(plants)))
+    player.lands.append(Land(None))
 
 # 主循环，包含游戏逻辑
 while 1:
@@ -355,10 +368,12 @@ while 1:
                     land.plant_points += calc_grow(
                         land.plant, temperature, water, light
                     )
+                    # 收获
                     if land.plant_status == 1:
                         land.plant = None
                         land.plant_status = 0
                         land.plant_points = 0
+                    # 更改植物状态
                     if land.plant_points >= 10:
                         land.plant_status = 1
 
