@@ -102,11 +102,14 @@ class Land:
     def __init__(self, plant) -> None:
         self.plant = plant
         self.plant_points = 0
-    
+
     def clear(self):
         self.plant = None
         self.plant_points = 0
         self.plant_status = 0
+
+    def grow(self, temperature, water, light):
+        self.plant_points += calc_grow(self.plant, temperature, water, light)
 
 
 # 定义玩家
@@ -158,11 +161,12 @@ props = []
 def use_greenhouse(player):
     pass
 
+
 props.append(
     Prop(
         name="Greenhouse",
-        use= use_greenhouse,
-        duration = 20,
+        use=use_greenhouse,
+        duration=20,
     )
 )
 
@@ -256,11 +260,9 @@ def print_player(player):
     #     print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
 
     # 玩家状态
-    print("  Buff", end="")
+    print("  Buff: ", end="")
     # for buff in player.buff:
     #     print("    {}, Duration: {}".format(buff.name, buff.duration), end=" ")
-
-    
     print()
 
 
@@ -322,9 +324,12 @@ while 1:
                 for land in player.lands:
                     if land.plant == None:
                         continue
-                    land.plant_points += calc_grow(
-                        land.plant, temperature, water, light
-                    )
+                    # 生长
+
+                    land.grow(temperature, water, light)
+                    # land.plant_points += calc_grow(
+                    #     land.plant, temperature, water, light
+                    # )
                     # 收获
                     if land.plant_status == 1:
                         land.clear()
