@@ -1,5 +1,6 @@
 import random
 
+
 # 定义植物
 class Plant:
     name = ""
@@ -13,6 +14,7 @@ class Plant:
         self.light = light
         self.water = water
 
+
 plants = [
     Plant(name="Corn", temperature=(20, 30), light=(60, 999), water=(70, 999)),
     Plant(name="Wheat", temperature=(20, 30), light=(70, 999), water=(50, 999)),
@@ -23,6 +25,7 @@ plants = [
     Plant(name="Sugar Cane", temperature=(20, 30), light=(80, 999), water=(80, 999)),
     Plant(name="Mushroom", temperature=(15, 25), light=(10, 30), water=(80, 999)),
 ]
+
 
 # 定义场景
 class Season:
@@ -35,6 +38,7 @@ class Season:
         self.temperature = temperature
         self.weathers = weathers
 
+
 class Weather:
     name = ""
     light = (0, 0)
@@ -45,40 +49,60 @@ class Weather:
         self.light = light
         self.water = water
 
+
 seasons = [
-    Season(name="spring", temperature=(10, 25), weathers={
-        Weather(name="Sunny", light=(80, 80), water=(10, 10)),
-        Weather(name="Cloudy", light=(50, 50), water=(20, 20)),
-        Weather(name="Light Rain", light=(40, 40), water=(40, 40)),
-        Weather(name="Heavy Rain", light=(40, 40), water=(70, 70)),
-    }),
-    Season(name="summer", temperature=(25, 40), weathers={
-        Weather(name="Sunny", light=(100, 100), water=(0, 0)),
-        Weather(name="Cloudy", light=(70, 70), water=(10, 10)),
-        Weather(name="Light Rain", light=(50, 50), water=(30, 30)),
-        Weather(name="Heavy Rain", light=(50, 50), water=(90, 90)),
-    }),
-    Season(name="autumn", temperature=(10, 25), weathers={
-        Weather(name="Sunny", light=(70, 70), water=(10, 10)),
-        Weather(name="Cloudy", light=(40, 40), water=(10, 10)),
-        Weather(name="Light Rain", light=(30, 30), water=(30, 30)),
-        Weather(name="Heavy Rain", light=(30, 30), water=(60, 60)),
-    }),
-    Season(name="winter", temperature=(-10, 10), weathers={
-        Weather(name="Sunny", light=(50, 50), water=(0, 0)),
-        Weather(name="Cloudy", light=(40, 40), water=(20, 20)),
-        Weather(name="Light Rain", light=(20, 20), water=(40, 40)),
-        Weather(name="Heavy Rain", light=(20, 20), water=(50, 50)),
-    }),
+    Season(
+        name="spring",
+        temperature=(10, 25),
+        weathers={
+            Weather(name="Sunny", light=(80, 80), water=(10, 10)),
+            Weather(name="Cloudy", light=(50, 50), water=(20, 20)),
+            Weather(name="Light Rain", light=(40, 40), water=(40, 40)),
+            Weather(name="Heavy Rain", light=(40, 40), water=(70, 70)),
+        },
+    ),
+    Season(
+        name="summer",
+        temperature=(25, 40),
+        weathers={
+            Weather(name="Sunny", light=(100, 100), water=(0, 0)),
+            Weather(name="Cloudy", light=(70, 70), water=(10, 10)),
+            Weather(name="Light Rain", light=(50, 50), water=(30, 30)),
+            Weather(name="Heavy Rain", light=(50, 50), water=(90, 90)),
+        },
+    ),
+    Season(
+        name="autumn",
+        temperature=(10, 25),
+        weathers={
+            Weather(name="Sunny", light=(70, 70), water=(10, 10)),
+            Weather(name="Cloudy", light=(40, 40), water=(10, 10)),
+            Weather(name="Light Rain", light=(30, 30), water=(30, 30)),
+            Weather(name="Heavy Rain", light=(30, 30), water=(60, 60)),
+        },
+    ),
+    Season(
+        name="winter",
+        temperature=(-10, 10),
+        weathers={
+            Weather(name="Sunny", light=(50, 50), water=(0, 0)),
+            Weather(name="Cloudy", light=(40, 40), water=(20, 20)),
+            Weather(name="Light Rain", light=(20, 20), water=(40, 40)),
+            Weather(name="Heavy Rain", light=(20, 20), water=(50, 50)),
+        },
+    ),
 ]
+
 
 class Land:
     plant = None
     plant_points = 0
+    plant_status = 0
 
     def __init__(self, plant) -> None:
         self.plant = plant
         self.plant_points = 0
+
 
 # 定义玩家
 class Player:
@@ -98,6 +122,7 @@ class Player:
         # self.fruits = {}
         # self.tasks = []
         self.props = []
+
 
 players = []
 players.append(Player("Player 1"))
@@ -126,7 +151,6 @@ players.append(Player("Player 4"))
 # tasks.append(Task(discription="Plant 3 apples", finish=task_3apple))
 
 
-
 # 定义道具
 class Prop:
     name = ""
@@ -140,78 +164,94 @@ class Prop:
         self.price = price
         self.use = use
 
+
 props = []
+
 
 def use_fertilizer(player):
     print("===Use Fertilizer===")
     print("input land number: ", end="")
     landnum = int(input())
-    if landnum not in range(1, len(player.lands)+1):
+    if landnum not in range(1, len(player.lands) + 1):
         print("Invalid land number!")
         return
-    land = player.lands[landnum-1]
-    land.plant_points+=1
-    player.fruits["Fertilizer"]-=1
+    land = player.lands[landnum - 1]
+    land.plant_points += 1
+    player.fruits["Fertilizer"] -= 1
     print("Use Fertilizer on Land{} successfully!".format(landnum))
-props.append(Prop(name="Fertilizer", discription="Use Fertilizer on a land to increase 1 point", price=10, use=use_fertilizer))
+
+
+props.append(
+    Prop(
+        name="Fertilizer",
+        discription="Use Fertilizer on a land to increase 1 point",
+        price=10,
+        use=use_fertilizer,
+    )
+)
+
 
 # 菜单
 class MenuItem:
-    name=""
-    operation=None
+    name = ""
+    operation = None
 
     def __init__(self, name, operation) -> None:
         self.name = name
         self.operation = operation
+
+
 playermenuitems = []
+
 
 def menuitem_buyland(player):
     print("===Buy Land===")
-    if player.money < 10:
-        print("Not enough money!")
+    # if player.money < 10:
+    #     print("Not enough money!")
+    #     return
+    # player.money-=10
+    if len(player.lands) >= 2:
+        print("Land is full!")
         return
-    player.money-=10
-    player.lands.append(Land(None))
+    else:
+        player.lands.append(Land(None))
     print("Buy Land successfully!")
+
+
 playermenuitems.append(MenuItem(name="Buy Land", operation=menuitem_buyland))
 
-# def menuitem_buytask(player):
-#     print("===Add Task===")
-#     if player.money < 10:
-#         print("Not enough money!")
-#         return
-#     player.money-=10
-#     player.tasks.append(random.choice(tasks))
-#     print("Add Task successfully!")
-# playermenuitems.append(MenuItem(name="Add Task", operation=menuitem_buytask))
 
-# def menuitem_finishtask(player):
-#     print("===Finish Task===")
-#     for task in range(1, len(player.tasks)+1):
-#         print("  {}. {}".format(task, player.tasks[task-1].discription))
-#     taskid = int(input("input task id: "))
-#     if taskid not in range(1, len(player.tasks)+1):
-#         print("Invalid task id!")
-#         return
-#     task = player.tasks[taskid-1]
-#     if task.finish(player):
-#         player.tasks.remove(task)
-#         player.taskcnt+=1
-#         print("Task finished!")
-#     else:
-#         print("Task not finished :(")
-# playermenuitems.append(MenuItem(name="Finish Task", operation=menuitem_finishtask))
+def menuitem_plant(player):
+    print("===Plant Fruit===")
+    land_num = int(input("input land number: "))
+    try:
+        if player.lands[land_num - 1].plant == None:
+            plant_num = int(input("input plant: "))
+            player.lands[land_num-1].plant = plants[plant_num-1]
+            # player.lands.pop(land_num - 1)
+            # player.lands.append(Land(plants[plant_num - 1]))
+        else:
+            print("Land is not empty!")
+            return
+    except:
+        print("Invalid operation!")
+        return
+
+
+playermenuitems.append(MenuItem(name="Plant Fruit", operation=menuitem_plant))
+
 
 #  工具函数
 def calc_grow(plant, temperature, water, light):
     point = 0
-    if temperature in range(plant.temperature[0], plant.temperature[1]+1):
-        point+=1
-    if water in range(plant.water[0], plant.water[1]+1):
-        point+=1
-    if light in range(plant.light[0], plant.light[1]+1):
-        point+=1
+    if temperature in range(plant.temperature[0], plant.temperature[1] + 1):
+        point += 1
+    if water in range(plant.water[0], plant.water[1] + 1):
+        point += 1
+    if light in range(plant.light[0], plant.light[1] + 1):
+        point += 1
     return point
+
 
 def print_player(player):
     print("*[{}]*".format(player.playername))
@@ -219,9 +259,22 @@ def print_player(player):
     print("  Lands: ")
     for land in player.lands:
         if land.plant == None:
-            print("    Land{}: Empty".format(player.lands.index(land)+1))
+            print("    Land{}: ❌Empty".format(player.lands.index(land) + 1))
+        elif land.plant_status == 1:
+            print(
+                "    Land{}: {}, [✅Ready to harvest]".format(
+                    player.lands.index(land) + 1, land.plant.name
+                )
+            )
         else:
-            print("    Land{}: {}, {}'[{}]".format(player.lands.index(land)+1, land.plant.name, land.plant_points, '#'*land.plant_points + '-'*(10-land.plant_points)))
+            print(
+                "    Land{}: {}, 🕑{}'[{}]".format(
+                    player.lands.index(land) + 1,
+                    land.plant.name,
+                    land.plant_points,
+                    "#" * land.plant_points + "-" * (10 - land.plant_points),
+                )
+            )
 
     # print("  Money: ${}".format(player.money))
 
@@ -239,12 +292,14 @@ def print_player(player):
         print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
     print()
 
+
 def playermenu_print():
     print("===User Menu===")
     print("  0. Exit")
     for item in playermenuitems:
-        print("  {}. {}".format(playermenuitems.index(item)+1, item.name))
+        print("  {}. {}".format(playermenuitems.index(item) + 1, item.name))
     print("===============")
+
 
 def playermenu_use(player):
     while 1:
@@ -256,10 +311,11 @@ def playermenu_use(player):
             print()
             break
         select = int(select)
-        if select not in range(1, len(playermenuitems)+1):
+        if select not in range(1, len(playermenuitems) + 1):
             print("Invalid select!")
             continue
-        playermenuitems[select-1].operation(player)
+        playermenuitems[select - 1].operation(player)
+
 
 #
 # 主程序
@@ -275,7 +331,7 @@ while 1:
         for day in range(1, 11):
             weather = random.choice(list(season.weathers))
             print("\n\n=====[{}, Day {}]=====".format(season.name, day))
-            
+
             # 输出当天环境数值
             temperature = random.randint(season.temperature[0], season.temperature[1])
             water = random.randint(weather.water[0], weather.water[1])
@@ -296,18 +352,20 @@ while 1:
                 for land in player.lands:
                     if land.plant == None:
                         continue
-                    land.plant_points+=calc_grow(land.plant, temperature, water, light)
-                    # if land.plant_points >= 10:
-                    #     if land.plant.name not in player.fruits:
-                    #         player.fruits[land.plant.name]=0
-                    #     player.fruits[land.plant.name]+=1
-                    #     land.plant_points=0
+                    land.plant_points += calc_grow(
+                        land.plant, temperature, water, light
+                    )
+                    if land.plant_status == 1:
+                        land.plant = None
+                        land.plant_status = 0
+                        land.plant_points = 0
+                    if land.plant_points >= 10:
+                        land.plant_status = 1
 
             # 输出玩家面板
             print("---players---\n")
             for player in players:
                 playermenu_use(player)
             #    print_player(player)
-
 
             input("Press Enter to continue...")
