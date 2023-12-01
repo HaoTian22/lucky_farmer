@@ -102,26 +102,23 @@ class Land:
     def __init__(self, plant) -> None:
         self.plant = plant
         self.plant_points = 0
+    
+    def clear(self):
+        self.plant = None
+        self.plant_points = 0
+        self.plant_status = 0
 
 
 # 定义玩家
 class Player:
     playername = ""
-    # money = 0
-    # taskcnt = 0
     lands = []
-    # fruits = {}
-    # tasks = []
     props = []
     buff = []
 
     def __init__(self, playername) -> None:
         self.playername = playername
-        # self.money = 100
-        # self.taskcnt = 0
         self.lands = []
-        # self.fruits = {}
-        # self.tasks = []
         self.props = []
 
 
@@ -130,26 +127,6 @@ players.append(Player("Player 1"))
 players.append(Player("Player 2"))
 players.append(Player("Player 3"))
 players.append(Player("Player 4"))
-
-# 定义任务
-# class Task:
-#     discription = ""
-#     finish = None
-
-#     def __init__(self, discription, finish) -> None:
-#         self.discription = discription
-#         self.finish = finish
-
-# tasks = []
-
-# def task_3apple(player):
-#     if "Apple" not in player.fruits:
-#         return False
-#     if player.fruits["Apple"] < 3:
-#         return False
-#     player.fruits["Apple"]-=3
-#     return True
-# tasks.append(Task(discription="Plant 3 apples", finish=task_3apple))
 
 
 # 定义道具
@@ -206,10 +183,6 @@ playermenuitems = []
 # 购买土地
 def menuitem_buyland(player):
     print("===Buy Land===")
-    # if player.money < 10:
-    #     print("Not enough money!")
-    #     return
-    # player.money-=10
 
     if len(player.lands) >= 2:
         print("Land is full!")
@@ -232,8 +205,6 @@ def menuitem_plant(player):
         if player.lands[land_num - 1].plant == None:
             plant_num = int(input("Input plant: (1-{}): ".format(len(plants))))
             player.lands[land_num - 1].plant = plants[plant_num - 1]
-            # player.lands.pop(land_num - 1)
-            # player.lands.append(Land(plants[plant_num - 1]))
         else:
             print("🚫 Land is not empty!")
             return
@@ -280,17 +251,6 @@ def print_player(player):
                 )
             )
 
-    # print("  Money: ${}".format(player.money))
-
-    # print("  Fruits: ", end="")
-    # for item in player.fruits:
-    #     print("{} x{}".format(item, player.fruits[item]), end=" ")
-    # print()
-
-    # print("  Tasks: ")
-    # for task in player.tasks:
-    #     print("      {}".format(task.discription))
-
     # print("  Props: ", end="")
     # for prop in player.props:
     #     print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
@@ -331,10 +291,7 @@ def playermenu_use(player):
 #
 # 主程序
 #
-
-# 随机分配植物
-# for player in players:
-#     player.lands.append(Land(random.choice(plants)))
+# 初始化
 for player in players:
     player.lands.append(Land(None))
 
@@ -370,9 +327,7 @@ while 1:
                     )
                     # 收获
                     if land.plant_status == 1:
-                        land.plant = None
-                        land.plant_status = 0
-                        land.plant_points = 0
+                        land.clear()
                     # 更改植物状态
                     if land.plant_points >= 10:
                         land.plant_status = 1
