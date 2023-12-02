@@ -113,13 +113,22 @@ class Land:
         # 计算玩家道具效果
         for buff in player.buff:
             if buff.name == "Grow light":
-                light += 10
+                light += 20
                 buff.use(player)
             if buff.name == "Water Pump":
-                water += 10
+                water += 20
                 buff.use(player)
             if buff.name == "Greenhouse":
-                temperature+=5
+                temperature += 5
+                buff.use(player)
+            if buff.name == "Cold wave":
+                temperature -= 5
+                buff.use(player)
+            if buff.name == "Drought":
+                water -= 10
+                buff.use(player)
+            if buff.name == "Cloudy":
+                water -= 10
                 buff.use(player)
 
         self.plant_points += calc_grow(self.plant, temperature, water, light)
@@ -156,7 +165,7 @@ class Prop:
     def use(self, player):
         self.duration -= 1
         if self.duration == 0:
-            player.props.remove(self)
+            player.buff.remove(self)
 
 
 
@@ -172,9 +181,6 @@ class Prop:
 #     land.plant_points += 1
 #     player.fruits["Fertilizer"] -= 1
 #     print("Use Fertilizer on Land{} successfully!".format(landnum))
-def use_greenhouse(player):
-    pass
-
 
 props = [
     Prop(
@@ -188,6 +194,18 @@ props = [
     Prop(
         name="Grow light",
         duration=20,
+    ),
+    Prop(
+        name="Cold wave",
+        duration=10,
+    ),
+    Prop(
+        name="Drought",
+        duration=10,
+    ),
+    Prop(
+        name="Cloudy",
+        duration=10,
     )
 ]
 
