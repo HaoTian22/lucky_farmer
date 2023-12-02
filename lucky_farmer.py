@@ -108,7 +108,20 @@ class Land:
         self.plant_points = 0
         self.plant_status = 0
 
-    def grow(self, temperature, water, light):
+    def grow(self, temperature, water, light, player):
+
+        # 计算玩家道具效果
+        for buff in player.buff:
+            if buff.name == "Grow light":
+                light += 10
+                buff.use(player)
+            if buff.name == "Water Pump":
+                water += 10
+                buff.use(player)
+            if buff.name == "Greenhouse":
+                temperature+=5
+                buff.use(player)
+
         self.plant_points += calc_grow(self.plant, temperature, water, light)
 
 
@@ -116,13 +129,12 @@ class Land:
 class Player:
     playername = ""
     lands = []
-    props = []
     buff = []
 
     def __init__(self, playername) -> None:
         self.playername = playername
         self.lands = []
-        self.props = []
+        self.buff = []
 
 
 players = []
@@ -136,15 +148,17 @@ players.append(Player("Player 4"))
 class Prop:
     name = ""
     duration = 0
-    use = None
 
-    def __init__(self, name, duration, use) -> None:
+    def __init__(self, name, duration) -> None:
         self.name = name
         self.duration = duration
-        self.use = use
+
+    def use(self, player):
+        self.duration -= 1
+        if self.duration == 0:
+            player.props.remove(self)
 
 
-props = []
 
 
 # def use_fertilizer(player):
@@ -162,13 +176,20 @@ def use_greenhouse(player):
     pass
 
 
-props.append(
+props = [
     Prop(
         name="Greenhouse",
-        use=use_greenhouse,
+        duration=20,
+    ),
+    Prop(
+        name="Water Pump",
+        duration=20,
+    ),
+    Prop(
+        name="Grow light",
         duration=20,
     )
-)
+]
 
 
 # 菜单
@@ -219,6 +240,18 @@ def menuitem_plant(player):
 
 playermenuitems.append(MenuItem(name="Plant Fruit", operation=menuitem_plant))
 
+# 使用道具
+def menuitem_use(player):
+    print("===Use Prop===")
+    print("Input prop number: ", end="")
+    prop_num = int(input())
+    player_num = int(input("Input player number: "))
+    if player_num not in range(1, len(players) + 1):
+        print("Invalid player number!")
+        return
+    players[player_num-1].buff.append(props[prop_num - 1])
+
+playermenuitems.append(MenuItem(name="Use Prop",operation=menuitem_use))
 
 #  工具函数
 def calc_grow(plant, temperature, water, light):
@@ -260,9 +293,9 @@ def print_player(player):
     #     print("{} x{}".format(prop.name, player.props.count(prop)), end=" ")
 
     # 玩家状态
-    print("  Buff: ", end="")
-    # for buff in player.buff:
-    #     print("    {}, Duration: {}".format(buff.name, buff.duration), end=" ")
+    print("  Buff: ")
+    for buff in player.buff:
+        print("    {}, Duration: {}".format(buff.name, buff.duration))
     print()
 
 
@@ -325,11 +358,7 @@ while 1:
                     if land.plant == None:
                         continue
                     # 生长
-
-                    land.grow(temperature, water, light)
-                    # land.plant_points += calc_grow(
-                    #     land.plant, temperature, water, light
-                    # )
+                    land.grow(temperature, water, light, player)
                     # 收获
                     if land.plant_status == 1:
                         land.clear()
