@@ -225,8 +225,8 @@ playermenuitems.append(MenuItem(name="Buy Land", operation=menuitem_buyland))
 # 种植作物
 def menuitem_plant(player):
     print("===Plant Fruit===")
-    land_num = int(input("Input land number: (1-{}): ".format(len(player.lands))))
     try:
+        land_num = int(input("Input land number: (1-{}): ".format(len(player.lands))))
         if player.lands[land_num - 1].plant == None:
             plant_num = int(input("Input plant: (1-{}): ".format(len(plants))))
             player.lands[land_num - 1].plant = plants[plant_num - 1]
@@ -243,11 +243,14 @@ playermenuitems.append(MenuItem(name="Plant Fruit", operation=menuitem_plant))
 # 使用道具
 def menuitem_use(player):
     print("===Use Prop===")
-    print("Input prop number: ", end="")
+    print("Input prop number (1-{}): ".format(len(props)), end="")
     prop_num = int(input())
-    player_num = int(input("Input player number: "))
+    if prop_num not in range(1, len(props) + 1):
+        print("🚫 Invalid prop number!")
+        return
+    player_num = int(input("Input player number (1-4): "))
     if player_num not in range(1, len(players) + 1):
-        print("Invalid player number!")
+        print("🚫 Invalid player number!")
         return
     players[player_num-1].buff.append(props[prop_num - 1])
 
