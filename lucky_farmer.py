@@ -109,7 +109,6 @@ class Land:
         self.plant_status = 0
 
     def grow(self, temperature, water, light, player):
-
         # 计算玩家道具效果
         for buff in player.buff:
             if buff.name == "Grow light":
@@ -168,8 +167,6 @@ class Prop:
             player.buff.remove(self)
 
 
-
-
 # def use_fertilizer(player):
 #     print("===Use Fertilizer===")
 #     print("input land number: ", end="")
@@ -206,7 +203,7 @@ props = [
     Prop(
         name="Cloudy",
         duration=10,
-    )
+    ),
 ]
 
 
@@ -258,6 +255,7 @@ def menuitem_plant(player):
 
 playermenuitems.append(MenuItem(name="Plant Fruit", operation=menuitem_plant))
 
+
 # 使用道具
 def menuitem_use(player):
     print("===Use Prop===")
@@ -270,9 +268,11 @@ def menuitem_use(player):
     if player_num not in range(1, len(players) + 1):
         print("🚫 Invalid player number!")
         return
-    players[player_num-1].buff.append(props[prop_num - 1])
+    players[player_num - 1].buff.append(props[prop_num - 1])
 
-playermenuitems.append(MenuItem(name="Use Prop",operation=menuitem_use))
+
+playermenuitems.append(MenuItem(name="Use Prop", operation=menuitem_use))
+
 
 #  工具函数
 def calc_grow(plant, temperature, water, light):
@@ -354,6 +354,8 @@ for player in players:
 # 主循环，包含游戏逻辑
 while 1:
     for season in seasons:
+        # disaster = random.choice(["Drought","Cold wave", None],weights=[0.02,0.02,0.96])
+
         for day in range(1, 11):
             weather = random.choice(list(season.weathers))
             print("\n\n=====[{}, Day {}]=====".format(season.name, day))
