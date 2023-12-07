@@ -97,18 +97,19 @@ def main(page: ft.Page):
         water = random.randint(weather.water[0], weather.water[1])
         light = random.randint(weather.light[0], weather.light[1])
 
-        info_card.content.content.controls=(
-                    ft.Text("Day:{}".format(day)),
-                    ft.Text("Season:{}".format(season.name)),
-                    ft.Text("Date:{}".format(day)),
-                    ft.Text("Weather:{}".format(weather.name)),
-                    ft.Text("Temperature:{}".format(temperature)),
-                    ft.Text("Light:{}".format(light)),
-                    ft.Text("Water:{}".format(water)),
-                    ft.Divider(),
-                    ft.ElevatedButton(text="New Day", on_click=new_day),
+        #       card      container column
+        info_card.content.content.controls = (
+            ft.Text("Day:{}".format(day)),
+            ft.Text("Season:{}".format(season.name)),
+            ft.Text("Date:{}".format(day)),
+            ft.Text("Weather:{}".format(weather.name)),
+            ft.Text("Temperature:{}".format(temperature)),
+            ft.Text("Light:{}".format(light)),
+            ft.Text("Water:{}".format(water)),
+            ft.Divider(),
+            ft.ElevatedButton(text="New Day", on_click=new_day),
         )
-    
+
         page.update()
         print(day)
 
@@ -125,11 +126,42 @@ def main(page: ft.Page):
         )
     )
 
-    # new_day()
+    player_card = ft.Card(
+        content=ft.Container(
+            content=ft.Row(
+                [
+                    ft.Column(
+                        [
+                            ft.Text("Player"),
+                        ],
+                        width=300,
+                    ),
+                    ft.Column(
+                        [
+                            ft.OutlinedButton("Plant"),
+                            ft.OutlinedButton("Use prop"),
+                            ft.OutlinedButton("Buy land"),
+                        ],
+                    ),
+                ],
+            ),
+            padding=15,
+        ),
+        width=500,
+        height=140,
+    )
 
     # page.add(color_dropdown, submit_btn, output_text)
     page.title = "Lucky Farmer"
-    page.add(info_card)
+    page.add(
+        ft.Row(
+            [
+                info_card,
+                ft.VerticalDivider(),
+                ft.Column([player_card, player_card, player_card, player_card]),
+            ]
+        )
+    )
     page.update()
 
 
