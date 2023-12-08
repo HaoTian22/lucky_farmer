@@ -1,18 +1,19 @@
 # Introduction
-This is a simple calculator of our group project board game **lucky farmer**.
+This is the readme file for the **Lucky Farmer** board game calculator.
 
-It's a strategy game about growing and harvesting.
+Lucky Farmer is a strategy game that involves growing and harvesting crops. We created this calculator because we found the calculations in the game to be boring and complex.
 
-When we create this board game, we find the calculation in the game boring and complex.   
+Traditionally, players were required to perform a series of calculations every minute, which detracted from the strategic aspect of the game. We developed this computer calculator to enhance the players' enjoyment and allow them to focus more on the game strategy.
 
-Ridiculously, it requires players to do a series of value calculations every minute, which drive players to focus on calculation instead of the strategy in the game.
-So we decided to make a computer calculator to increase players' pleasure.
+# Getting Started
+To start playing Lucky Farmer, follow these steps:
 
-# Play
-Download [calulator](/lucky_farmer.py), run it in Python.  
+1. Game Setup:
+   - Download the [calculator](/lucky_farmer.py) and run it using Python, or visit the [website](https://lucky-farmer.haotian22.top) (recommended).
+   - Refer to the end of the [rules](/rules.md) file to ensure you have all the necessary cards ready.
 
-See the end of [rules](/rules.md) to prepare nesseary cards.  
+2. Gameplay:
+   - Familiarize yourself with the rules of the game.
+   - We acknowledge that understanding all the rules at once can be challenging, so we are working on improving the user's guidance.
 
-Follow the rules to play.  
-
-Have fun 😊.
+Enjoy your game! 😊
