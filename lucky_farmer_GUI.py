@@ -133,7 +133,7 @@ class Land:
     # 收获
     def harvest(self):
         self.plant_status = 1
-        self.display.controls[0].value = "✅" + self.plant.name
+        self.display.controls[0].value = "✅ " + self.plant.name
         print("✅Harvest")
 
     # 清除
@@ -148,29 +148,83 @@ class Land:
     # 成长
     def grow(self, temperature, water, light, player):
         # 计算玩家道具效果
-        for buff in player.buff:
+        for buff in player.buffs:
             if buff.name == "Grow light":
                 light += 20
-                buff.use(player)
             if buff.name == "Water Pump":
                 water += 20
-                buff.use(player)
             if buff.name == "Greenhouse":
                 temperature += 5
-                buff.use(player)
             if buff.name == "Cold wave":
                 temperature -= 5
-                buff.use(player)
             if buff.name == "Drought":
                 water -= 10
-                buff.use(player)
             if buff.name == "Cloudy":
                 water -= 10
-                buff.use(player)
 
         self.plant_points += calc_grow(self.plant, temperature, water, light)
         self.display.controls[1].value = self.plant_points
         self.display.controls[2].value = self.plant_points / 10
+
+# 定义道具
+class Prop:
+    name = ""
+    duration = 0
+
+    def __init__(self, name, duration) -> None:
+        self.name = name
+        self.duration = duration
+        self.display = ft.Row(
+                [
+                    ft.Text(self.name),
+                    ft.Text(self.duration),
+                ]
+            )
+
+    def use(self, player):
+        self.duration -= 1
+        self.display.controls[1].value = self.duration
+        print(self.name, self.duration)
+        # 结束清除道具
+        if self.duration == 0:
+            player.buffs.remove(self)
+            player.buffs_column.controls.remove(self.display)
+    
+    def apply(self, player):
+        player.buffs.append(self)
+        self.display.controls[1].value = self.duration
+    @classmethod
+    def create_copy(cls, original_prop):
+        # Create a new instance of Prop with the same attributes
+        return cls(name=original_prop.name, duration=original_prop.duration)
+
+
+props = [
+    Prop(
+        name="Greenhouse",
+        duration=20,
+    ),
+    Prop(
+        name="Water Pump",
+        duration=20,
+    ),
+    Prop(
+        name="Grow light",
+        duration=20,
+    ),
+    Prop(
+        name="Cold wave",
+        duration=10,
+    ),
+    Prop(
+        name="Drought",
+        duration=10,
+    ),
+    Prop(
+        name="Cloudy",
+        duration=10,
+    ),
+]
 
 
 def calc_grow(plant, temperature, water, light):
@@ -216,6 +270,8 @@ def main(page: ft.Page):
             )
             print("  {}: {} points".format(plant.name, point))
 
+        # 道具计算与输出
+
         # 下一天按钮
         info_card.content.content.controls.append(
             ft.ElevatedButton(
@@ -237,7 +293,10 @@ def main(page: ft.Page):
                 # 更改植物状态
                 if land.plant_points >= 10:
                     land.harvest()
-                page.update()
+
+            for buff in player.buffs:
+                buff.use(player)
+            page.update()
 
         page.update()
         print(day)
@@ -264,19 +323,23 @@ def main(page: ft.Page):
     class Player:
         playername = ""
         lands = []
-        buff = []
+        buffs = []
         player_card = None
-        land_display = ft.Column([])
 
         def __init__(self, playername, land) -> None:
             self.playername = playername
             self.lands = [land]
-            self.buff = []
+            self.buffs = []
 
             # 定义地皮展示
-            self.lands_column = ft.Column()
+            self.lands_column = ft.Column(spacing=0)
             for l in self.lands:
                 self.lands_column.controls.append(l.display)
+            
+            # 定义道具显示
+            self.buffs_column = ft.Column(spacing=0,wrap=True,height=60)
+            for b in self.buffs:
+                self.buffs_column.controls.append(b.display)
 
             # 玩家界面展示(静态)
             self.player_card = ft.Card(
@@ -289,16 +352,17 @@ def main(page: ft.Page):
                                     # 显示土地
                                     ft.Row([ft.Text("Lands: "),self.lands_column,]),
                                     # 显示道具
-                                    ft.Row([ft.Text("Buffs: "),self.props_column]),      
+                                    ft.Row([ft.Text("Buffs: "),self.buffs_column]),      
                                 ],
                                 width=300,
+                                spacing=0,
                             ),
                             ft.Column(
                                 [
                                     ft.OutlinedButton(
                                         "Plant", on_click=self.open_seed_popups
                                     ),
-                                    ft.OutlinedButton("Use prop"),
+                                    ft.OutlinedButton("Use prop",on_click=self.open_prop_popups),
                                     ft.OutlinedButton("Buy land",on_click=self.menuitem_buy_land),
                                 ],
                             ),
@@ -332,9 +396,35 @@ def main(page: ft.Page):
                 self.grow_popups.actions[1].options.append(ft.dropdown.Option(plant.name))
             self.player_card.content.content.controls.append(self.grow_popups)
 
+
+            # 选择道具弹窗
+            self.prop_popups = ft.AlertDialog(
+                title=ft.Text("Select Player & Prop                        "),
+                content=ft.Text("Please select your prop player to use."),
+                actions=[
+                    ft.Dropdown(
+                        width=50,
+                        options=[ft.dropdown.Option("1"), ft.dropdown.Option("2"),ft.dropdown.Option("3"),ft.dropdown.Option("4")],
+                    ),
+                    ft.Dropdown(
+                        width=150,
+                        options=[],
+                    ),
+                    ft.TextButton("Use", on_click=self.menuitem_use),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+            for prop in props:
+                self.prop_popups.actions[1].options.append(ft.dropdown.Option(prop.name))
+            self.player_card.content.content.controls.append(self.prop_popups)
+
         # 打开选择种子窗口
         def open_seed_popups(self, e):
             self.grow_popups.open = True
+            page.update()
+
+        def open_prop_popups(self, e):
+            self.prop_popups.open = True
             page.update()
 
         # 种植
@@ -358,6 +448,25 @@ def main(page: ft.Page):
                 print("🚫 Land is not empty!")
                 return
         
+        # 使用道具
+        def menuitem_use(self, e):
+            # prop_num = int(input("Input prop number (1-{}): ".format(len(props))))
+            for i in range(len(props)):
+                if props[i].name == self.prop_popups.actions[1].value:
+                    prop_num = i
+                    break
+                # print("🚫 Invalid prop number!")
+                # return
+            player_num = int(self.prop_popups.actions[0].value)
+            players[player_num - 1].get_buff(Prop.create_copy(props[prop_num]))
+            self.prop_popups.open = False
+            page.update()
+
+        def get_buff(self, prop):
+            self.buffs.append(prop)
+            self.buffs_column.controls.append(self.buffs[-1].display)
+            page.update()
+
         # 购买土地
         def menuitem_buy_land(self, e):
             print("===Buy Land===")
