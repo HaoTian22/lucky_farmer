@@ -110,16 +110,24 @@ class Land:
         self.plant_points = 0
         if plant != None:
             self.display = ft.Row(
-                [ft.Text(self.plant.name),ft.Text(self.plant_points), ft.ProgressBar(width=100, value=0)]
+                [
+                    ft.Text(self.plant.name),
+                    ft.Text(self.plant_points),
+                    ft.ProgressBar(width=100, value=0),
+                ]
             )
         else:
             self.display = ft.Row(
-                [ft.Text("❌ Empty"), ft.ProgressBar(width=100, value=0)]
+                [
+                    ft.Text("❌ Empty"),
+                    ft.Text(self.plant_points),
+                    ft.ProgressBar(width=100, value=0),
+                ]
             )
 
     # 种植作物
-    def grow_crops(self,plant):
-        self.plant=plant
+    def grow_crops(self, plant):
+        self.plant = plant
         self.display.controls[0].value = self.plant.name
 
     # 收获
@@ -133,6 +141,7 @@ class Land:
         self.plant = None
         self.plant_points = 0
         self.plant_status = 0
+        self.display.controls[1].value = 0
         self.display.controls[0].value = "❌ Empty"
         self.display.controls[2].value = 0
 
@@ -176,6 +185,7 @@ def calc_grow(plant, temperature, water, light):
 
 
 def main(page: ft.Page):
+    # 主要的计算逻辑(需要与全部事情关联)
     def new_day(*e):
         global season, weather, temperature, water, light, day
         day += 1
@@ -188,7 +198,7 @@ def main(page: ft.Page):
         # 输出数值
         #       card      container column
         info_card.content.content.controls = [
-            ft.Text("📅Day: {}".format(day),size=30),
+            ft.Text("📅Day: {}".format(day) ,size=30),
             ft.Text("🌏Season: {}".format(season.name)),
             ft.Text("📆Date: {}".format(10 if day % 10 == 0 else day % 10)),
             ft.Text("🌈Weather: {}".format(weather.name)),
@@ -248,7 +258,9 @@ def main(page: ft.Page):
         )
     )
 
-    # 玩家界面
+    # 定义玩家
+    # 基本上全部操作都在这里
+    # 函数有: 打开种子弹窗、使用种子、购买土地
     class Player:
         playername = ""
         lands = []
@@ -260,8 +272,13 @@ def main(page: ft.Page):
             self.playername = playername
             self.lands = [land]
             self.buff = []
+
+            # 定义地皮展示
+            self.lands_column = ft.Column()
             for l in self.lands:
-                self.land_display = l.display
+                self.lands_column.controls.append(l.display)
+
+            # 玩家界面展示(静态)
             self.player_card = ft.Card(
                 content=ft.Container(
                     content=ft.Row(
@@ -269,19 +286,20 @@ def main(page: ft.Page):
                             ft.Column(
                                 [
                                     ft.Text(playername),
-                                    ft.Text("Lands: "),
-                                    self.land_display,
-                                    ft.Text("Buffs: "),
+                                    # 显示土地
+                                    ft.Row([ft.Text("Lands: "),self.lands_column,]),
+                                    # 显示道具
+                                    ft.Row([ft.Text("Buffs: "),self.props_column]),      
                                 ],
                                 width=300,
                             ),
                             ft.Column(
                                 [
                                     ft.OutlinedButton(
-                                        "Plant", on_click=self.menuitem_plant
+                                        "Plant", on_click=self.open_seed_popups
                                     ),
                                     ft.OutlinedButton("Use prop"),
-                                    ft.OutlinedButton("Buy land"),
+                                    ft.OutlinedButton("Buy land",on_click=self.menuitem_buy_land),
                                 ],
                             ),
                         ],
@@ -292,19 +310,71 @@ def main(page: ft.Page):
                 height=140,
             )
 
+            # 种植弹窗
+            self.grow_popups = ft.AlertDialog(
+                title=ft.Text("Select Land & Seed                        "),
+                content=ft.Text("Please select your land and seed to grow."),
+                actions=[
+                    ft.Dropdown(
+                        width=50,
+                        options=[ft.dropdown.Option("1"), ft.dropdown.Option("2")],
+                    ),
+                    ft.Dropdown(
+                        width=150,
+                        options=[],
+                    ),
+                    ft.TextButton("Grow", on_click=self.menuitem_plant),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+            # 种植弹窗添加植物
+            for plant in plants:
+                self.grow_popups.actions[1].options.append(ft.dropdown.Option(plant.name))
+            self.player_card.content.content.controls.append(self.grow_popups)
+
+        # 打开选择种子窗口
+        def open_seed_popups(self, e):
+            self.grow_popups.open = True
+            page.update()
+
+        # 种植
         def menuitem_plant(self, e):
-            land_num = int(input("Input land number: (1-{}): ".format(len(self.lands))))
+            # land_num = int(input("Input land number: (1-{}): ".format(len(self.lands))))
+            land_num = int(self.grow_popups.actions[0].value)
+            for i in range(len(plants)):
+                if plants[i].name == self.grow_popups.actions[1].value:
+                    plant_num = i
+                    break
+            if land_num > len(self.lands):
+                print("🚫 Invalid land number!")
+                return
             if self.lands[land_num - 1].plant == None:
-                plant_num = int(input("Input plant: (1-{}): ".format(len(plants))))
+                # plant_num = int(input("Input plant: (1-{}): ".format(len(plants))))
                 # self.lands[land_num - 1].plant = plants[plant_num - 1]
-                self.lands[land_num - 1].grow_crops(plants[plant_num - 1])
+                self.lands[land_num - 1].grow_crops(plants[plant_num])
+                self.grow_popups.open = False
                 page.update()
             else:
                 print("🚫 Land is not empty!")
                 return
+        
+        # 购买土地
+        def menuitem_buy_land(self, e):
+            print("===Buy Land===")
+            if len(self.lands) >= 2:
+                print("Land is full!")
+                return
+            else:
+                # confirm = input("Buy land? Have enough money? (y/n): ")
+                # if confirm == "y":
+                self.lands.append(Land(None))
+                self.lands_column.controls.append(self.lands[-1].display)
+                page.update()
+                print("✅ Buy Land successfully!")
 
+    # 添加玩家
     players = []
-    players.append(Player("Player 1", Land(plants[1])))
+    players.append(Player("Player 1", Land(None)))
     players.append(Player("Player 2", Land(None)))
     players.append(Player("Player 3", Land(None)))
     players.append(Player("Player 4", Land(None)))
