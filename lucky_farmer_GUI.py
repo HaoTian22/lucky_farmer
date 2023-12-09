@@ -202,15 +202,15 @@ class Prop:
 props = [
     Prop(
         name="Greenhouse",
-        duration=20,
+        duration=15,
     ),
     Prop(
         name="Water Pump",
-        duration=20,
+        duration=15,
     ),
     Prop(
         name="Grow light",
-        duration=20,
+        duration=15,
     ),
     Prop(
         name="Cold wave",
