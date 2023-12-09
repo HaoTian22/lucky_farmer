@@ -20,7 +20,7 @@ plants = [
     Plant(name="Corn", temperature=(20, 30), light=(40, 999), water=(60, 999)),
     Plant(name="Wheat", temperature=(15, 30), light=(70, 999), water=(50, 999)),
     Plant(name="Banana", temperature=(22, 35), light=(60, 999), water=(50, 999)),
-    Plant(name="Carrot", temperature=(5, 25), light=(40, 999), water=(60, 999)),
+    Plant(name="Carrot", temperature=(0, 20), light=(40, 999), water=(60, 999)),
     Plant(name="Potato", temperature=(5, 25), light=(70, 999), water=(40, 999)),
     Plant(name="Apple", temperature=(10, 20), light=(80, 999), water=(60, 999)),
     Plant(name="Sugar Cane", temperature=(20, 30), light=(60, 999), water=(80, 999)),
