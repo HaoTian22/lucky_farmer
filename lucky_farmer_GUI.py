@@ -17,13 +17,13 @@ class Plant:
 
 
 plants = [
-    Plant(name="Corn", temperature=(20, 30), light=(60, 999), water=(70, 999)),
-    Plant(name="Wheat", temperature=(20, 30), light=(70, 999), water=(50, 999)),
-    Plant(name="Banana", temperature=(25, 30), light=(40, 999), water=(50, 999)),
-    Plant(name="Carrot", temperature=(20, 30), light=(40, 999), water=(60, 999)),
-    Plant(name="Potato", temperature=(10, 20), light=(70, 999), water=(20, 999)),
-    Plant(name="Apple", temperature=(12, 24), light=(70, 999), water=(10, 999)),
-    Plant(name="Sugar Cane", temperature=(20, 30), light=(80, 999), water=(80, 999)),
+    Plant(name="Corn", temperature=(20, 30), light=(40, 999), water=(60, 999)),
+    Plant(name="Wheat", temperature=(15, 30), light=(70, 999), water=(50, 999)),
+    Plant(name="Banana", temperature=(22, 35), light=(60, 999), water=(50, 999)),
+    Plant(name="Carrot", temperature=(5, 25), light=(40, 999), water=(60, 999)),
+    Plant(name="Potato", temperature=(5, 25), light=(70, 999), water=(40, 999)),
+    Plant(name="Apple", temperature=(10, 20), light=(80, 999), water=(60, 999)),
+    Plant(name="Sugar Cane", temperature=(20, 30), light=(60, 999), water=(80, 999)),
     Plant(name="Mushroom", temperature=(15, 25), light=(10, 30), water=(80, 999)),
 ]
 
@@ -67,7 +67,7 @@ seasons = [
     ),
     Season(
         name="summer",
-        temperature=(25, 40),
+        temperature=(25, 38),
         weathers={
             Weather(name="Sunny", light=(100, 100), water=(0, 0)),
             Weather(name="Cloudy", light=(70, 70), water=(10, 10)),
@@ -87,7 +87,7 @@ seasons = [
     ),
     Season(
         name="winter",
-        temperature=(-10, 10),
+        temperature=(-5, 10),
         weathers={
             Weather(name="Sunny", light=(50, 50), water=(0, 0)),
             Weather(name="Cloudy", light=(40, 40), water=(20, 20)),
@@ -229,12 +229,19 @@ props = [
 
 def calc_grow(plant, temperature, water, light):
     point = 0
+    # print(plant.name)
     if temperature in range(plant.temperature[0], plant.temperature[1] + 1):
+        point += 2
+        print("T2",end="")
+    elif temperature in range(plant.temperature[0]-3, plant.temperature[1] +4):
         point += 1
+        print("T1",end="")
     if water in range(plant.water[0], plant.water[1] + 1):
         point += 1
+        print("W1",end="")
     if light in range(plant.light[0], plant.light[1] + 1):
         point += 1
+        print("L1",end="")
     return point
 
 
@@ -245,7 +252,16 @@ def main(page: ft.Page):
         day += 1
         season = seasons[(day - 1) // 10 % 4]
         weather = random.choice(list(season.weathers))
-        temperature = random.randint(season.temperature[0], season.temperature[1])
+
+        # 试图改进温度算法，波动更小
+        if day % 10 == 1:
+            temperature = random.randint(season.temperature[0], season.temperature[1])
+        while 1:
+            temperature1 = random.randint(temperature-4, temperature+4)
+            if temperature1 in range(season.temperature[0], season.temperature[1]):
+                temperature = temperature1
+                break
+        # temperature = random.randint(season.temperature[0], season.temperature[1])
         water = random.randint(weather.water[0], weather.water[1])
         light = random.randint(weather.light[0], weather.light[1])
 
@@ -261,6 +277,8 @@ def main(page: ft.Page):
             ft.Text("💧Water: {}".format(water)),
             ft.Divider(),
         ]
+
+        print("Day: {}".format(day))
 
         # 植物计算与输出
         for plant in plants:
@@ -299,7 +317,7 @@ def main(page: ft.Page):
             page.update()
 
         page.update()
-        print(day)
+
 
     # 场景信息卡
     info_card = ft.Card(
