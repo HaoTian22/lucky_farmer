@@ -214,15 +214,15 @@ props = [
     ),
     Prop(
         name="Cold wave",
-        duration=10,
+        duration=15,
     ),
     Prop(
         name="Drought",
-        duration=10,
+        duration=15,
     ),
     Prop(
         name="Cloudy",
-        duration=10,
+        duration=15,
     ),
 ]
 
