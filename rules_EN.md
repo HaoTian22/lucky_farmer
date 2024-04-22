@@ -93,6 +93,8 @@ The actions of submitting tasks or selling crops can be performed at any time.
 
 ## Treasure Chest Items
 
+After purchasing a treasure chest, the item cards are kept by the player. When used, they are displayed and then returned to the store.
+
 - Chest 1: $100
 
 | Card | Effect | Duration | Total |
