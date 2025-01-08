@@ -4,7 +4,8 @@
 
 This is the readme file for the **Lucky Farmer** board game calculator.
 
-Lucky Farmer is a our group final project of the university free elective course *Computer Game Design (1001)* in 2023 fall.
+Lucky Farmer is a our group final project of the university free elective course *Computer Game Design (1001)* in 2023 fall.  
+
 Lucky Farmer is a strategy game that involves growing and harvesting crops. We created this calculator because we found the calculations in the game to be boring and complex.
 
 Traditionally, players were required to perform a series of calculations every minute, which detracted from the strategic aspect of the game. We developed this computer calculator to enhance the players' enjoyment and allow them to focus more on the game strategy.
